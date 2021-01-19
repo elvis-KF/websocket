@@ -9,23 +9,28 @@ module.exports = {
    * cb: 执行函数
    */
   connPool(sql, cb){
-     //先连接，再查询，最后释放
-     pool.getConnection((err, conn) => {
-       if(err) {
-         // log失败
-         console.log(err)
-       } else {
-         // 查询
-         const q = conn.query(sql, (err, rows) => {
-          if(err) {
-            console.log(err)
-          }
-          cb(err, rows)
-
-          conn.release()
-         }) 
-       }
-     })
+    return new Promise((reslove, reject) => {
+      //先连接，再查询，最后释放
+      pool.getConnection((err, conn) => {
+        if(err) {
+          // log失败
+          console.log(err)
+        } else {
+          // 查询
+          const q = conn.query(sql, (err, rows) => {
+           if(err) {
+             console.log(err)
+           }
+           
+           conn.release()
+           
+           reslove({err, rows})
+           // cb(err, rows)
+ 
+          }) 
+        }
+      })
+    })
   },
   // 转成json
   writeJson(res, code = 200, msg = 'success', data = null) {

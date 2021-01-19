@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import './login.scss' 
 import axios from 'axios'
+import { useHistory } from 'react-router'
 
 interface Info {
   account: string
@@ -8,16 +9,17 @@ interface Info {
 }
 
 const Login = () => {
+  const history = useHistory()
   const [info, setInfo] = useState<Info>({
     account: '',
     password: ''
   })
   const login = async () => {
-    const res = await axios.post('http://localhost:2333/api/user/login',{
+    const { data } = await axios.post('//localhost:2333/api/user/login',{
       account: info.account,
       password: info.password
     })
-    if(res.data.code == 200 && res.data.msg == 'success'){
+    if(data.code == 200 && data.msg == 'success'){
       // this.$alert('登录成功','提示',{
       //     confirmButtonText: '确定',
       //     callback: ()=>{
@@ -29,8 +31,9 @@ const Login = () => {
         account: '',
         password: ''
       })
+      history.push('/home')
     }else{
-      console.log(res.data.msg)
+      console.log(data.msg)
         // this.$alert(res.data.msg,'提示',{
         //     confirmButtonText: '确定',
         // })

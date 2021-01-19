@@ -7,19 +7,16 @@ const router = require('./router/router')
 console.log(router)
 app.use(bodyParser())
 
-app.use(function(req, res, next){
-  console.log(res.header)
-  console.log(req)
+app.use(async (ctx, next) => {
   //设置跨域访问
-  // res.set('Content-Type', 'application/zip')
-  res.set('Access-Control-Allow-Origin', '*');
-  res.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
-  res.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+  ctx.set('Access-Control-Allow-Origin', '*');
+  ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
+  ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
 
-  if (req.method == 'OPTIONS') {
-      res.send(200); /*让options请求快速返回*/
+  if (ctx.request.method == 'OPTIONS') {
+      ctx.response.status = 200 /*让options请求快速返回*/
   }else {
-      next();
+    await next();
   }
 })
 

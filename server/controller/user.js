@@ -1,6 +1,6 @@
 const sql = require('../sql/sql')
 const dayjs = require('dayjs')
-const func = require('../sql/func')
+const func = require('../sql/func');
 
 const formatData = (rows) => {
   return rows.map(row=>{
@@ -94,40 +94,41 @@ module.exports = {
   },
 
   //登录
-  login(req, res){
-      let user_name = req.body.account;
-      let password = req.body.password;
+  async login(ctx){
+      const { request, response } = ctx
+      let user_name = request.body.account;
+      let password = request.body.password;
 
       // console.log('user_name', user_name);
       let sql = `SELECT * FROM user WHERE account='${user_name}'`;
 
-      func.connPool(sql, (err,rows)=>{
-          if(!rows.length){
-              res.json({
-                  code: 400,
-                  msg: '用户名不存在'
-              });
-              return ;
-          }
-          let pass = rows[0].password;
-          if(password == pass){
-              let user = {
-                  user_id: rows[0].id,
-                  user_name: rows[0].account,
-              };
-              // req.session.login = user;
-              res.json({
-                  code: 200,
-                  msg: 'success',
-              })
-          }else{
-              res.json({
-                  code: 200,
-                  msg: '密码错误'
-              })
-              return;
-          }
-      });
+      const { err, rows } = await func.connPool(sql)
+      if(!rows.length){
+        response.body = {
+            code: 400,
+            msg: '用户名不存在'
+        };
+        return ;
+      }
+      let pass = rows[0].password;
+      if(password == pass){
+        let user = {
+            user_id: rows[0].id,
+            user_name: rows[0].account,
+        };
+        // request.session.login = user;
+        ctx.body = {
+            code: 200,
+            msg: 'success',
+        }
+        console.log(response)
+      }else{
+        ctx.body = {
+            code: 200,
+            msg: '密码错误',
+        }
+        return;
+      }
   },
 
   //自动登录
