@@ -6,6 +6,7 @@ module.exports = {
     login: path + '/user/login',
     getAccount: path + '/user/getAccount',
     addUser: path + '/user/addUser',
+    getUserInfo: path + '/user/getUserInfo'
     //tag
     // getAllTag: path +'/tag/getAllTag',
 }

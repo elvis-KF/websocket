@@ -114,14 +114,26 @@ module.exports = {
       if(password == pass){
         let user = {
             user_id: rows[0].id,
-            user_name: rows[0].account,
+            user_name: rows[0].account
         };
-        // request.session.login = user;
+        const config =  {
+            domain: 'localhost:2333',  // 写cookie所在的域名
+            // path: '/',       // 写cookie所在的路径
+            maxAge: 10 * 60 * 1000, // cookie有效时长
+            // expires: new Date('2017-02-15'),  // cookie失效时间
+            httpOnly: false,  // 是否只用于http请求中获取
+            overwrite: false  // 是否允许重写
+        }    
+        ctx.cookies.set(
+            'username', 
+            user.user_name, 
+            config
+        )
+        ctx.cookies.set('uid', user.user_id, config)
         ctx.body = {
             code: 200,
             msg: 'success',
         }
-        console.log(response)
       }else{
         ctx.body = {
             code: 200,
@@ -130,6 +142,33 @@ module.exports = {
         return;
       }
   },
+
+  // 获取用户信息
+  async getUserInfo(ctx) {
+    const uid = ctx.cookies.get('uid')
+    let sql = `SELECT account, id, role, create_time, update_time, avatar FROM user WHERE id='${uid}'`
+    const { err, rows } = await func.connPool(sql)
+    if(!rows.length){
+        ctx.body = {
+            code: 400,
+            msg: '查找不到用户信息'
+        };
+        return ;
+    }
+    let user = {
+        uid: rows[0].id,
+        username: rows[0].account,
+        role: rows[0].role,
+        createTime: rows[0].create_time,
+        updateTime: rows[0].update_time,
+        avatar: rows[0].avatar
+    }
+    ctx.body = {
+        code: 200,
+        msg: 'success',
+        data: user
+    }
+  },    
 
   //自动登录
   autoLogin(req,res){

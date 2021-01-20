@@ -1,6 +1,7 @@
 import React,{ChangeEvent, useEffect, useRef, useState} from 'react'
 import './index.scss'
 import userPic from '../../images/user.png'
+import axios from 'axios'
 
 interface MsgItem {
   // 类型
@@ -28,6 +29,7 @@ const App = () => {
   const [userList, setUserList] = useState<UserItem[]>([
     {username: 'elvis', avater: '//downhdlogo.yy.com/hdlogo/6060/60/60/67/1529676741/u1529676741ze_z3me.jpg'}
   ])
+  console.log(document.cookie)
   const [msg, setMsg] = useState<string>('')
   const [wss, setWss] = useState<WebSocket>()
   const [img, setImg] = useState<File>()
@@ -45,6 +47,13 @@ const App = () => {
     }
     e.target.value = ''
   }
+  const getUserInfo = async () => {
+    const { data } = await axios.get('//localhost:2333/api/user/getUserInfo')
+    console.log(data)
+  }
+  useEffect(() => {
+    getUserInfo()
+  }, [])
   useEffect(() => {
     const ws = new WebSocket('ws://localhost:2333')
     ws.onopen = (res) => {

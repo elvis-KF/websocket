@@ -7,6 +7,7 @@ const router = new Router()
 router.post(api.addDpt, user.addDpt)
 router.post(api.login, user.login)
 router.get(api.getAccount, user.getAccount)
+router.get(api.getUserInfo, user.getUserInfo)
 router.post(api.addUser, user.addUser)
 
 module.exports = {
